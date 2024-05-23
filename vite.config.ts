@@ -27,6 +27,9 @@ export default defineConfig({
             },
             renderChunk(code,a, opt){
                 const fileCode = a.modules[a.facadeModuleId].code
+                if(!fileCode){
+                    return  code
+                }
                 const fileCodeReturn = fileCode.replace(/.*\(([^\(\)]*).*\).*;/,'$1')
                 const format = {
                     "cjs":()=>`exports.default = ${fileCodeReturn};\nexports.${fileCodeReturn} = ${fileCodeReturn};`
