@@ -6,7 +6,7 @@ import fsExtra from "fs-extra"
 // 入口文件
 const inputFiles = glob.sync(["src/*"], {absolute:false})
 // 虚拟文件
-const virtualFiles = glob.sync(["**/*"], {absolute:false})
+const virtualFiles = glob.sync([], {absolute:false})
 export default defineConfig({
     plugins:[
         vue(),
@@ -27,7 +27,7 @@ export default defineConfig({
             },
             renderChunk(code,a, opt){
                 const fileCode = a.modules[a.facadeModuleId].code
-                if(!fileCode){
+                if(!fileCode || !code.match(fileCode)){
                     return  code
                 }
                 const fileCodeReturn = fileCode.replace(/.*\(([^\(\)]*).*\).*;/,'$1')
