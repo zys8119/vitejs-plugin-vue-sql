@@ -26,7 +26,6 @@ export default defineConfig({
                 }
             },
             renderChunk(code,a, opt){
-                // const {name} = parse(a.fileName)
                 const fileCode = a.modules[a.facadeModuleId].code
                 const fileCodeReturn = fileCode.replace(/.*\(([^\(\)]*).*\).*;/,'$1')
                 const format = {
