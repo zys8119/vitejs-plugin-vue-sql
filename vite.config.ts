@@ -27,7 +27,7 @@ export default defineConfig({
             },
             renderChunk(code,a, opt){
                 const fileCode = a.modules[a.facadeModuleId].code
-                if(!fileCode || !code?.includes(fileCode)){
+                if(!fileCode || !code?.includes?.(fileCode)){
                     return  code
                 }
                 const fileCodeReturn = fileCode.replace(/.*\(([^\(\)]*).*\).*;/,'$1')
