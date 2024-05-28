@@ -1,6 +1,6 @@
 cd dist
 git init
-giturl=仓库地址
+giturl=http://192.168.110.132/zj-front-end/questions-render-release.git
 git remote add origin $giturl
 git fetch origin main
 git --no-pager log origin/main -1
@@ -28,6 +28,6 @@ new_version="$major.$minor.$patch"
 echo "$(cat package.json | sed "s/\(version\": \"\).*\(\"\)/\1$new_version\2/")" > package.json
 git add .
 git commit -m "[add] update version $new_version"
-git pull origin main --rebase
-git rebase --skip
+git pull -f origin main
 git push origin main
+git --no-pager log origin/main -1
