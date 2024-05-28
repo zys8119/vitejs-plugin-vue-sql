@@ -1,6 +1,6 @@
 cd dist
 git init
-giturl=http://192.168.110.132/zj-front-end/questions-render-release.git
+giturl=仓库地址
 git remote add origin $giturl
 git fetch origin main
 git --no-pager log origin/main -1
