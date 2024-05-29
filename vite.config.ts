@@ -3,7 +3,7 @@ import vue from "@vitejs/plugin-vue"
 import {parse, resolve} from "path"
 import glob from "fast-glob"
 import fsExtra from "fs-extra"
-import {rollup} from "rollup"
+import strip from "strip-comments"
 // 入口文件
 const inputFiles = glob.sync(["src/*"], {absolute:false})
 // 虚拟文件
@@ -12,7 +12,7 @@ export default defineConfig({
     plugins:[
         vue(),
         {
-            name:"vite-plugin-virtual-model",
+            name:"vite-plugin-vite-npm-build-virtual-model",
             resolveId(source) {
                 if(/virtual:model-/.test(source)) {
                     return source
@@ -24,10 +24,21 @@ export default defineConfig({
                     const file = id.replace(/^virtual:model-|\.ts$/g, "")
                     const {name} = parse(file)
                     const filePath = resolve(__dirname, file)
-                    const res = await rollup({
-                        input:filePath,
-                    })
-                    const exportsName = (await res.generate({})).output[0].exports
+                    const fileContent = strip(fsExtra.readFileSync(filePath,'utf8'))
+                    let exportsName = fileContent.match(/export\s*((const|class|function|default).*[^\s]*|\{[^\{|\}]*?\})/g).map(e=>e.trim()).map(e=>{
+                        if(/export\s*(const)/.test(e)){
+                            return e.match(/export\s*(const)\s*([^\s]*)/)?.[2]
+                        }else if(/export\s*(default)/.test(e)){
+                            return 'default'
+                        }else if(/export\s*(\*)/.test(e)){
+                            return '*'
+                        }else if(/export\s*(function)/.test(e)){
+                            return e.match(/export\s*(function)\s*([^\s{}()]*)/)?.[2]
+                        }else if(/export\s*(class)/.test(e)){
+                            return e.match(/export\s*(class)\s*([^\s{}()]*)/)?.[2]
+                        }
+                        return e.match(/\{([^{}]*)\}/)?.[1]?.split?.(',').map(e=>e.trim().replace(/:.*|\s{1,}.*/,''))
+                    }).reduce((a:string[],b:any)=>{return a.concat(b)},[]).map(e=>e.replace(/(:|;).*|\s{1,}.*/,'')).reduce((a:string[],b:any)=>{return a.includes(b) ?a:a.concat(b)},[])
                     const defaultName = `default_exports_${name}`
                     const defaultNameCopy = `default_exports_copy_${name}`
                     const _imports = exportsName.map(e=>e === 'default' ? `${e} as ${defaultName}`:e).join()
@@ -48,7 +59,7 @@ export default defineConfig({
                     "iife":()=>code.replace(fileCode, '')
                 }[opt.format]?.() || code.replace(fileCode, `${_defaultText}export {${_exports}}`)
             },
-            writeBundle(opt, bundle) {
+            writeBundle(error) {
                 const input = resolve(__dirname,'package.json')
                 const out = resolve(__dirname,'dist/package.json')
                 const json = fsExtra.readJSONSync(input)
