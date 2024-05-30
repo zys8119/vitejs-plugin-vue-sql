@@ -8,6 +8,7 @@ import strip from "strip-comments"
 const inputFiles = glob.sync(["src/*"], {absolute:false})
 // 虚拟文件
 const virtualFiles = glob.sync(["*/*"], {absolute:false})
+const virtualFileMap = new Map()
 export default defineConfig({
     plugins:[
         vue(),
@@ -20,12 +21,15 @@ export default defineConfig({
                 return  source
             },
             async load(id) {
+                if(virtualFileMap.has(id)){
+                    return fsExtra.readFileSync(id,'utf8')+'\nexport default null'
+                }
                 if(/virtual:model-/.test(id)) {
                     const file = id.replace(/^virtual:model-|\.ts$/g, "")
                     const {name} = parse(file)
                     const filePath = resolve(__dirname, file)
                     const fileContent = strip(fsExtra.readFileSync(filePath,'utf8'))
-                    let exportsName = fileContent.match(/export\s*((const|class|function|default).*[^\s]*|\{[^\{|\}]*?\})/g).map(e=>e.trim()).map(e=>{
+                    let exportsName = (fileContent.match(/export\s*((const|class|function|default).*[^\s]*|\{[^\{|\}]*?\})/g) || []).map(e=>e.trim()).map(e=>{
                         if(/export\s*(const)/.test(e)){
                             return e.match(/export\s*(const)\s*([^\s]*)/)?.[2]
                         }else if(/export\s*(default)/.test(e)){
@@ -39,6 +43,10 @@ export default defineConfig({
                         }
                         return e.match(/\{([^{}]*)\}/)?.[1]?.split?.(',').map(e=>e.trim().replace(/:.*|\s{1,}.*/,''))
                     }).reduce((a:string[],b:any)=>{return a.concat(b)},[]).map(e=>e.replace(/(:|;).*|\s{1,}.*/,'')).reduce((a:string[],b:any)=>{return a.includes(b) ?a:a.concat(b)},[])
+                    if(exportsName.length === 0){
+                        virtualFileMap.set(file, true)
+                        exportsName = ['default']
+                    }
                     const defaultName = `default_exports_${name}`
                     const defaultNameCopy = `default_exports_copy_${name}`
                     const _imports = exportsName.map(e=>e === 'default' ? `${e} as ${defaultName}`:e).join()
