@@ -7,7 +7,7 @@ import strip from "strip-comments"
 // 入口文件
 const inputFiles = glob.sync(["src/*"], {absolute:false})
 // 虚拟文件
-const virtualFiles = glob.sync(["*/*"], {absolute:false})
+const virtualFiles = glob.sync(["**/*","{!node_modules,!release.sh,!dist}"], {absolute:false})
 const virtualFileMap = new Map()
 export default defineConfig({
     plugins:[
@@ -20,7 +20,7 @@ export default defineConfig({
                 }
                 return  source
             },
-            async load(id) {
+            load(id) {
                 if(virtualFileMap.has(id)){
                     return fsExtra.readFileSync(id,'utf8')+'\nexport default null'
                 }
