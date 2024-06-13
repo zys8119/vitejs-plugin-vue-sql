@@ -36,12 +36,11 @@ const plugin = function (options:Partial<typeof defaultConfig>){
         load(id) {
             if(config.include.some(v => id.match(v))) {
                 let code = readFileSync(id,'utf8')
-                const sql = code.match(/\$sql(\(|`)(.|\n)*?(\)|`)/g)
+                const sql = code.match(/(\$sql(\`([^`])*(\$\{.*\}`))+|\$sql(\`([^`])*`)+|\$sql\([^()]*\))(`[^`]*`|\([^()]*\))*/g)
                 if(sql) {
                     sql.forEach(e=>{
-                        code = code.replace(e,`__vue__sql__const`)
+                        code = code.replace(e,`__vue__sql__const('start')${e.replace(/^\$sql/,'')}('end')`)
                     })
-                    code.replace(/_ctx\.__vue__sql__const/g,`__vue__sql__const`)
                     return code
                 }
             }
