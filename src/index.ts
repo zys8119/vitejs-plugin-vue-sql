@@ -39,7 +39,7 @@ const plugin = function (options:Partial<typeof defaultConfig>){
                 const sql = code.match(/(\$sql(\`([^`])*(\$\{.*\}`))+|\$sql(\`([^`])*`)+|\$sql\([^()]*\))(`[^`]*`|\([^()]*\))*/g)
                 if(sql) {
                     sql.forEach(e=>{
-                        code = code.replace(e,`__vue__sql__const('start')${e.replace(/^\$sql/,'')}('end')`)
+                        code = code.replace(e,`__vue__sql__const('vitejs-plugin-vue-sql-start')${e.replace(/^\$sql/,'')}('vitejs-plugin-vue-sql-end')`)
                     })
                     return code
                 }
