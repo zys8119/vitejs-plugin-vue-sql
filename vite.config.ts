@@ -86,13 +86,20 @@ export default defineConfig({
                 a[name] = virtualFiles.includes(b) ? `virtual:model-${b}.ts` : b
                 return a
             },{}),
-            external: ["vue",'fs','path'],
-            output:{
-                entryFileNames: `[name].js`,
-                chunkFileNames: `[name].js`,
-                assetFileNames: `[name].[ext]`,
-                format:'cjs'
-            }
+            external: ['fs','path','unplugin-auto-import/vite'],
+            output:[
+                {
+                    entryFileNames: `[name].cjs`,
+                    chunkFileNames: `[name].cjs`,
+                    assetFileNames: `[name].[ext]`,
+                    format:'cjs'
+                },
+                {
+                    entryFileNames: `[name].js`,
+                    chunkFileNames: `[name].js`,
+                    assetFileNames: `[name].[ext]`,
+                }
+            ]
         },
         watch:{},
     },
