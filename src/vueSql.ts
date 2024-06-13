@@ -1,3 +1,4 @@
+import {ref} from "vue"
 const $sql = function (result:any,...a){
     if(Object.prototype.toString.call(a[0]) === '[object Array]') {
         if(a?.[0]?.raw[0] === a?.[0]?.[0]){
@@ -6,7 +7,8 @@ const $sql = function (result:any,...a){
         }
     }
     if(a[0] === 'vitejs-plugin-vue-sql-end'){
-        return result
+        const resultRef = ref(result)
+        return resultRef
     }
     if(result === 'vitejs-plugin-vue-sql-start') {
         return $sql.bind(null,[])

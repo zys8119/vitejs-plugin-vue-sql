@@ -47,7 +47,13 @@ const plugin = function (options:Partial<typeof defaultConfig>){
         },
         transform(code, id, options) {
             if(config.include.some(v => id.match(v))) {
-                return code.replace(/_ctx\.__vue__sql__const/g,`__vue__sql__const`)
+                const sql = code.match(/(_ctx\.__vue__sql__const(\`([^`])*(\$\{.*\}`))+|_ctx\.__vue__sql__const(\`([^`])*`)+|_ctx\.__vue__sql__const\([^()]*\))(`[^`]*`|\([^()]*\))*/g)
+                if(sql) {
+                    sql.forEach(e=>{
+                        code = code.replace(e,`${e}.value`)
+                    })
+                    return code.replace(/_ctx\.__vue__sql__const/g,`__vue__sql__const`)
+                }
             }
         },
 
