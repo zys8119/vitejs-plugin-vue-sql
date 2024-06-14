@@ -11,6 +11,7 @@ const defaultConfig = {
     importName:'default',
 } as const
 const plugin = function (options:Partial<typeof defaultConfig>){
+    let __vue__sql__const_ctx_map_index = 0
     const config = merge(defaultConfig, options)
     const file = resolve("/", config.file)
     const importNameAsName = '_vue_sql_as_importName'
@@ -20,7 +21,7 @@ const plugin = function (options:Partial<typeof defaultConfig>){
         name:"vitejs-plugin-vue-sql",
         enforce:"post",
         configResolved(config) {
-            config.plugins.push(AutoImport({
+            config.plugins.push((AutoImport?.default || AutoImport)({
                 include:[
                     /\.[tj]sx?$/, // .ts, .tsx, .js, .jsx
                     /\.vue$/, /\.vue\?vue/, // .vue
@@ -60,11 +61,19 @@ const plugin = function (options:Partial<typeof defaultConfig>){
                 const sql = code.match(/(_ctx\.__vue__sql__const(\`([^`])*(\$\{.*\}`))+|_ctx\.__vue__sql__const(\`([^`])*`)+|_ctx\.__vue__sql__const\([^()]*\))(`[^`]*`|\([^()]*\))*/g)
                 if(sql) {
                     sql.forEach(e=>{
-                        code = code.replace(e,`${e}.value`)
+                        console.log(e)
+                        const name = `__vue__sql__const_ctx_${__vue__sql__const_ctx_map_index}`
+                        code = code.replace(e,`${name}.value`)
+                        code = `const ${name} = ${e};${code}`
+                        __vue__sql__const_ctx_map_index += 1
                     })
                     return code
-                        .replace(/_ctx\.__vue__sql__const/g,`__vue__sql__const`)
-                        .replace(new RegExp(`_ctx\\.${importNameAs}`,'g'),importNameAs)
+                        .replace(/_ctx\.__vue__sql__const/g, (e)=>{
+                            return `__vue__sql__const`
+                        })
+                        .replace(new RegExp(`_ctx\\.${importNameAs}`,'g'),(e)=>{
+                            return importNameAs
+                        })
                 }
                 return code
             }
