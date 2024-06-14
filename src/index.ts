@@ -54,11 +54,11 @@ const plugin = function (options:Partial<typeof defaultConfig>){
         },
         transform(code, id, options) {
             if(config.include.some(v => id.match(v))) {
+                if(importNameAs){
+                    code = `import {${config.importName} as ${importNameAs}} from "${file}";${code}`
+                }
                 const sql = code.match(/(_ctx\.__vue__sql__const(\`([^`])*(\$\{.*\}`))+|_ctx\.__vue__sql__const(\`([^`])*`)+|_ctx\.__vue__sql__const\([^()]*\))(`[^`]*`|\([^()]*\))*/g)
                 if(sql) {
-                    if(typeof config.file === 'string' && importNameAs){
-                        code = `import {${config.importName} as ${importNameAs}} from "${file}";${code}`
-                    }
                     sql.forEach(e=>{
                         code = code.replace(e,`${e}.value`)
                     })
@@ -66,6 +66,7 @@ const plugin = function (options:Partial<typeof defaultConfig>){
                         .replace(/_ctx\.__vue__sql__const/g,`__vue__sql__const`)
                         .replace(new RegExp(`_ctx\\.${importNameAs}`,'g'),importNameAs)
                 }
+                return code
             }
         },
 

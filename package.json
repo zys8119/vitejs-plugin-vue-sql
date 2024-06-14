@@ -1,6 +1,6 @@
 {
 	"name": "vitejs-plugin-vue-sql",
-	"version": "0.0.4",
+	"version": "0.0.5",
 	"main": "index.cjs",
 	"types": "index.d.ts",
 	"exports": {
