@@ -61,7 +61,6 @@ const plugin = function (options:Partial<typeof defaultConfig>){
                 const sql = code.match(/(_ctx\.__vue__sql__const(\`([^`])*(\$\{.*\}`))+|_ctx\.__vue__sql__const(\`([^`])*`)+|_ctx\.__vue__sql__const\([^()]*\))(`[^`]*`|\([^()]*\))*/g)
                 if(sql) {
                     sql.forEach(e=>{
-                        console.log(e)
                         const name = `__vue__sql__const_ctx_${__vue__sql__const_ctx_map_index}`
                         code = code.replace(e,`${name}.value`)
                         code = `const ${name} = ${e};${code}`
