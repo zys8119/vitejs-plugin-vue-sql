@@ -23,7 +23,4 @@ declare module "vue"{
     interface ComponentCustomOptions {
         $sql:typeof SqlFunction
     }
-    interface ComponentCustomProps {
-        $sql:typeof SqlFunction
-    }
 }

@@ -5,12 +5,12 @@
 	"types": "index.d.ts",
 	"exports": {
 		".": {
-			"types": "./dist/astro.d.ts",
+			"types": "./index.d.ts",
 			"require": "./index.cjs",
 			"import": "./index.js"
 		},
 		"./vueSql": {
-			"types": "./dist/astro.d.ts",
+			"types": "./index.d.ts",
 			"require": "./index.cjs",
 			"import": "./index.js"
 		}
