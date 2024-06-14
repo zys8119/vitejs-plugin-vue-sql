@@ -86,7 +86,7 @@ export default defineConfig({
                 a[name] = virtualFiles.includes(b) ? `virtual:model-${b}.ts` : b
                 return a
             },{}),
-            external: ['fs','path','unplugin-auto-import/vite'],
+            external: ['fs','path','vue','unplugin-auto-import/vite'],
             output:[
                 {
                     entryFileNames: `[name].cjs`,
