@@ -7,7 +7,11 @@ const $sql = function (result:any,...a){
         }
     }
     if(a[0] === 'vitejs-plugin-vue-sql-end'){
+        const execSql = result.pop()
         const resultRef = ref(result)
+        ;(async ()=>{
+            resultRef.value =  await execSql?.(...result)
+        })()
         return resultRef
     }
     if(result === 'vitejs-plugin-vue-sql-start') {
