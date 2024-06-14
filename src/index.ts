@@ -2,7 +2,7 @@ import {Plugin} from "vite"
 import {merge} from "lodash"
 import {readFileSync} from "fs-extra"
 import {resolve} from "path"
-const AutoImport = require('unplugin-auto-import/vite')
+import AutoImport from "unplugin-auto-import/vite"
 const defaultConfig = {
     include: [
         /\.vue$/
@@ -20,7 +20,7 @@ const plugin = function (options:Partial<typeof defaultConfig>){
         name:"vitejs-plugin-vue-sql",
         enforce:"post",
         configResolved(config) {
-            config.plugins.push(AutoImport.default({
+            config.plugins.push(AutoImport({
                 include:[
                     /\.[tj]sx?$/, // .ts, .tsx, .js, .jsx
                     /\.vue$/, /\.vue\?vue/, // .vue
