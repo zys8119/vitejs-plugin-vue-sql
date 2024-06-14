@@ -8,7 +8,7 @@ const $sql = function (result:any,...a){
     }
     if(a[0] === 'vitejs-plugin-vue-sql-end'){
         const execSql = result.pop()
-        const resultRef = ref(result)
+        const resultRef = ref([])
         ;(async ()=>{
             resultRef.value =  await execSql?.(...result)
         })()
