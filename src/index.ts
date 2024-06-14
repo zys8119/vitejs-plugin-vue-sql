@@ -58,13 +58,13 @@ const plugin = function (options:Partial<typeof defaultConfig>){
                 if(sql) {
                     if(typeof config.file === 'string' && importNameAs){
                         code = `import {${config.importName} as ${importNameAs}} from "${file}";${code}`
-                        code = code.replace(new RegExp(`_ctx\\.${importNameAs}`,'g'),importNameAs)
                     }
                     sql.forEach(e=>{
                         code = code.replace(e,`${e}.value`)
                     })
                     return code
                         .replace(/_ctx\.__vue__sql__const/g,`__vue__sql__const`)
+                        .replace(new RegExp(`_ctx\\.${importNameAs}`,'g'),importNameAs)
                 }
             }
         },
